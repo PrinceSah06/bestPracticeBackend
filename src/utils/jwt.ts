@@ -12,7 +12,7 @@ interface JwtPayload {
  }
 export async function genrateAccessToken(data:JwtPayload) {
 
-     const token =  sign(data,env.JWT_ACCESS_SECRET,{expiresIn:'15m'})
+     const token =  sign(data,env.JWT_ACCESS_SECRET,{expiresIn:'1h'})
 
      return token
     
