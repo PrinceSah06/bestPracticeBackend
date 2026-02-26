@@ -2,6 +2,7 @@
  import {z} from 'zod'
 
 config();
+ console.log('inside evn.ts  ', process.env.MONGO_URI)
 
 const envSchema = z.object({
 PORT: z.coerce.number().default(3000),
@@ -18,5 +19,6 @@ const safeParsed = envSchema.safeParse(process.env)
 if(!safeParsed.success){
   console.error("❌ Invalid environment variables:");
   console.error(safeParsed.error.format());
+  process.exit(1)
 }
 export const env = safeParsed.data;

@@ -17,13 +17,13 @@ export const authMiddleware = async (c: Context, next: Next) => {
   if (!token) {
     return c.json({
       message: "token is missing",
-    });
+    },401);
   }
 
   if (!env) {
     return c.json({
       message: "env Missig",
-    });
+    },501);
   }
 
   try {
@@ -42,7 +42,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
 };
 
 export const authorize = (role: "admin" | "user") => {
-  console.log(`role comming from authmiddlware is =============${role}`)
+  // console.log(`role comming from authmiddlware is =============${role}`)
   return async (c: Context, next: Next) => {
     const user = c.get("user");
 

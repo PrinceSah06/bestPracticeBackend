@@ -1,24 +1,29 @@
-import  type { Context,Next } from "hono";
+import type { Context, Next } from "hono";
 import { AppError } from "../utils/AppError";
 
 
-export async function errorMiddleware(c:Context,next:Next) {
+export async function errorMiddleware(c: Context, next: Next) {
 
     try {
         await next()
-    } catch (error) {
+    } catch (error : any) {
+        console.log(`=============testing error obj ================
+            ${error}`)
+            // error.middleware.ts
 
-        if(error instanceof AppError){
+
+
+        if (error instanceof AppError) {
             return c.json({
-                message:error.message,
-                },error.statusCode )
+                message: error.message,
+            }, error.statusCode)
         }
-           console.error("Unexpected Error:", error);
+        console.error("Unexpected Error:", error);
 
-    return c.json(
-      { message: "Internal Server Error" },
-      500
-    );
+        return c.json(
+            { message: "Internal Server Error" },
+            500
+        );
     }
-    
+
 }

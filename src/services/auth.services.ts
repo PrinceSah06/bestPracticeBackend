@@ -2,6 +2,7 @@ import User from "../models/user.model";
 import { z } from "zod";
 import { AppError } from "../utils/AppError";
 import { genrateAccessToken, genrateRefreshToken, verifyRefreshToken } from "../utils/jwt";
+import { redis } from "bun";
 
 interface user {
   name: string;
@@ -31,7 +32,7 @@ if (!adminExists) {
 
 
   if (isExist) {
-    throw new Error("USER_ALREADY_EXISTS");
+    throw new AppError("USER_ALREADY_EXISTS",409);
   }
 
 
@@ -67,14 +68,12 @@ export async function loginUser(data: LoginInput) {
     id: user._id.toString(),
     role: user.role,
   });
-
-  user.refreshToken.push({ token: refreshToken })
-
+  
 
 
 
- 
-  await user.save();
+ await redis.set(`refresh:${user._id.toString()}`,refreshToken,"EX",7*24*60*60)
+
 
   return {
     message: "Login successful",
@@ -90,57 +89,43 @@ export async function loginUser(data: LoginInput) {
 }
 
 
-export async function refreshUserToken(refreshToken:string){
-
- let payload;
+export async function refreshUserToken (refreshToken: string) {
+  let payload;
 
   try {
     payload = verifyRefreshToken(refreshToken);
-  } catch (error) {
+  } catch {
     throw new AppError("Invalid refresh token", 401);
   }
-const user = await User.findById(payload.id);
 
-if (!user) {
-  throw new AppError("User not found", 401);
-}
+  const storedToken = await redis.get(`refresh:${payload.id}`);
 
-const tokenExists = user.refreshToken.some(
-  (t) => t.token === refreshToken
-);
+  if (!storedToken || storedToken !== refreshToken) {
+    throw new AppError("Refresh token mismatch", 401);
+  }
 
-if (!tokenExists) {
-  throw new AppError("Refresh token mismatch", 401);
-}
+  // Rotation
+  await redis.del(`refresh:${payload.id}`);
 
+  const newAccessToken = await genrateAccessToken({
+    id: payload.id,
+    role: payload.role,
+  });
 
+  const newRefreshToken = await genrateRefreshToken({
+    id: payload.id,
+    role: payload.role,
+  });
 
-  const newAccessToken =  await genrateAccessToken({
-    id:payload.id,
-role:payload.role  })
+  await redis.set(
+    `refresh:${payload.id}`,
+    newRefreshToken,
+    "EX",
+    7 * 24 * 60 * 60
+  );
 
-
-  const newRefreshToken =  await genrateRefreshToken({
-    id:payload.id,
-role:payload.role  })
-
-
-  user.refreshToken=user.refreshToken.filter(  (t) => t.token !== refreshToken
-);
-
-user.refreshToken.push({ token: newRefreshToken });
-if (user.refreshToken.length > 5) {
-  user.refreshToken.shift();
-}
- await user.save()
-
-
-   return {
+  return {
     accessToken: newAccessToken,
     refreshToken: newRefreshToken,
   };
- 
-
 }
-
-

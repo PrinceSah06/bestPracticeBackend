@@ -8,7 +8,7 @@ interface IUser  extends Document{
   role: "USER" | "ADMIN";
   isVerified: boolean;
   isActive: boolean;
-  refreshToken:{token:string,
+  refreshToken?:{token:string,
   createdAt?:Date}[];
   isDeleted:boolean
   deletedAt?: Date,

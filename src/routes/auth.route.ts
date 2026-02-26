@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import {  loginUser, loginValidator, refreshUserToken, registerUser } from "../services/auth.services";
 import { AppError } from "../utils/AppError";
 import { getCookie, setCookie } from "hono/cookie";
+import redis from "../config/radis.config";
 
  const  userValidator = z.object({
     name:z
@@ -48,6 +49,7 @@ import { getCookie, setCookie } from "hono/cookie";
 
 authRoute.post("/login", async (c) => {
   const body = await c.req.json();
+  console.log('body ==========>',body)
 
   const parsed = loginValidator.safeParse(body);
 
@@ -57,8 +59,13 @@ authRoute.post("/login", async (c) => {
 
   const result = await loginUser(parsed.data);
 
-  const { accessToken,refreshToken} = result
+  const { accessToken,refreshToken,user} = result
+console.log("Before redis.set");
 
+
+  //  await redis.set(`refresh:${user.id.toString()}`,refreshToken,"EX",7*24*60*60)
+
+console.log("After redis.set");
 
   setCookie(c, "refreshToken", refreshToken, {
     httpOnly: true,
@@ -84,6 +91,7 @@ authRoute.post('/refresh',async (c) => {
   if (!refreshToken) {
     throw new AppError("Refresh token missing", 401);
   }
+
 
   const { accessToken, refreshToken: newRefreshToken } =
     await refreshUserToken(refreshToken);
