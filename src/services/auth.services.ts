@@ -2,7 +2,7 @@ import User from "../models/user.model";
 import { z } from "zod";
 import { AppError } from "../utils/AppError";
 import { genrateAccessToken, genrateRefreshToken, verifyRefreshToken } from "../utils/jwt";
-import { redis } from "bun";
+import redis  from "../config/radis.config";
 
 interface user {
   name: string;
@@ -74,8 +74,9 @@ export async function loginUser(data: LoginInput) {
 
  await redis.set(`refresh:${user._id.toString()}`,refreshToken,"EX",7*24*60*60)
 
-
+ const red =  await redis.get(`refresh:${user._id.toString()}`)
   return {
+    red,
     message: "Login successful",
     user: {
       id: user._id,
@@ -128,4 +129,15 @@ export async function refreshUserToken (refreshToken: string) {
     accessToken: newAccessToken,
     refreshToken: newRefreshToken,
   };
+}
+
+
+export async function logoutformRadis(id:string) {
+
+
+ 
+   const res = await redis.del(`refresh:${id}`)
+
+   return res
+  
 }

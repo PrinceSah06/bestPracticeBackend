@@ -22,6 +22,8 @@ services:
     image: valkey/valkey:latest
     ports:
       - "6379:6379"
+    environment:
+      - REDIS_URL=redis://valkey:6379
     volumes:
       - valkey_data:/data
     

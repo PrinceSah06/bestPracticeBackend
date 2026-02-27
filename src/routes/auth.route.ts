@@ -4,6 +4,8 @@ import {  loginUser, loginValidator, refreshUserToken, registerUser } from "../s
 import { AppError } from "../utils/AppError";
 import { getCookie, setCookie } from "hono/cookie";
 import redis from "../config/radis.config";
+import { logOutController } from "../controller/auth.controller";
+import { authMiddleware } from "../middleware/auth.middleware";
 
  const  userValidator = z.object({
     name:z
@@ -83,6 +85,7 @@ console.log("After redis.set");
 
   }, 200);
 });
+authRoute.post('/logout',authMiddleware,logOutController)
 
 authRoute.post('/refresh',async (c) => {
 
