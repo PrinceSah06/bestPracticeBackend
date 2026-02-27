@@ -1,76 +1,80 @@
-🔐 SecureServer – Production-Grade Authentication API
+# 🔐 SecureServer
 
-SecureServer is a production-ready authentication backend built using Bun, Hono, MongoDB, Valkey (Redis), and JWT.
-It implements a secure access/refresh token architecture with Redis-based session management.
+Enterprise-Style Authentication & API Platform built with **Bun + Hono + MongoDB + Valkey (Redis)**.
 
-🚀 Tech Stack
+This project demonstrates a production-ready JWT authentication system with Redis-backed refresh token management and clean backend architecture.
 
-Runtime: Bun
+---
 
-Framework: Hono
+## 🚀 Tech Stack
 
-Language: TypeScript (Strict Mode)
+- **Runtime:** Bun
+- **Framework:** Hono
+- **Language:** TypeScript (Strict Mode)
+- **Database:** MongoDB (Mongoose)
+- **Cache / Session Store:** Valkey (Redis compatible)
+- **Authentication:** JWT (Access + Refresh Tokens)
+- **Validation:** Zod
+- **Password Hashing:** bcrypt
+- **Containerization:** Docker
 
-Database: MongoDB (Mongoose)
+---
 
-Cache / Session Store: Valkey (Redis compatible)
+## 🏗 Architecture Overview
 
-Authentication: JWT (Access + Refresh Tokens)
+### Authentication Flow
 
-Security: bcrypt, HTTP-only cookies
+1. User logs in
+2. Access token (short-lived) is generated
+3. Refresh token (long-lived) is generated
+4. Refresh token stored in Redis with TTL
+5. Access token used for protected routes
+6. Refresh token used to generate new access token
 
-Validation: Zod
+---
 
-Containerization: Docker
+## 🔐 Refresh Token Strategy
 
-🔐 Authentication Architecture
+Refresh tokens are stored in Redis using:
 
-This project implements:
 
-Short-lived Access Tokens
+refresh:<userId> → refreshToken
 
-Long-lived Refresh Tokens
 
-Refresh token storage in Valkey
+Each key includes a TTL aligned with token expiration.
 
-Token expiration (TTL)
+Example:
 
-Redis-backed session invalidation
 
-Secure password hashing using bcrypt
+refresh:69a070b88c28c912602c1c13
 
-Token Flow
 
-User logs in
+---
 
-Access + Refresh tokens generated
+## 📂 Project Structure
 
-Refresh token stored in Valkey with TTL
 
-Access token used for protected routes
-
-Refresh token used to issue new access tokens
-
-📂 Project Structure
 src/
-  controllers/
-  services/
-  middleware/
-  routes/
-  config/
-  utils/
-  types/
+controllers/
+services/
+repositories/
+middleware/
+config/
+utils/
+types/
 
-This structure follows clean architecture principles for scalability and maintainability.
 
-🐳 Running With Docker
+This structure follows clean architecture principles.
 
-Make sure Docker is installed.
+---
 
-Start MongoDB and Valkey containers:
+## 🐳 Running With Docker
 
+Start MongoDB and Valkey:
+
+```bash
 docker compose up -d
-🛠 Installation
+📦 Installation
 bun install
 ▶️ Run Development Server
 bun run dev
@@ -88,36 +92,7 @@ PORT=3000
 MONGO_URI=mongodb://127.0.0.1:27017/myDB
 REDIS_HOST=127.0.0.1
 REDIS_PORT=6379
-ACCESS_TOKEN_SECRET=your_secret
-REFRESH_TOKEN_SECRET=your_secret
-🎯 Features Implemented
-
-User authentication
-
-JWT-based authorization
-
-Redis-backed refresh tokens
-
-Token expiration management
-
-Secure password hashing
-
-Modular backend architecture
-
-📈 Future Improvements
-
-Refresh token rotation
-
-Role-based access control (RBAC)
-
-Rate limiting
-
-API documentation (Swagger)
-
-Unit & integration tests
-
-Deployment setup
-
-👨‍💻 Author
-
-Built as part of a production-level backend engineering practice project.
+ACCESS_TOKEN_SECRET=your_access_secret
+REFRESH_TOKEN_SECRET=your_refresh_secret
+ACCESS_TOKEN_EXPIRY=15m
+REFRESH_TOKEN_EXPIRY=7d
