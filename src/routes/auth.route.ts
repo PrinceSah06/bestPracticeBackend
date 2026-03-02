@@ -33,13 +33,13 @@ import { authMiddleware } from "../middleware/auth.middleware";
  authRoute.post("/register", async (c) => {
 
   const body = await c.req.json();
-
   const parsed = userValidator.safeParse(body);
 
   if (!parsed.success) {
     throw new AppError("Invalid input", 400);
   }
-
+ console.log(`login body ===> : ${parsed.data}`)
+ 
   const user = await registerUser(parsed.data);
 
   return c.json({
