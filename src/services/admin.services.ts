@@ -1,7 +1,6 @@
 import { threadCpuUsage } from "node:process";
 import user from "../models/user.model";
 import { AppError } from "../utils/AppError";
-import { group } from "node:console";
 
 interface updateType{
     name?:string,
@@ -9,7 +8,6 @@ interface updateType{
     isDelete?:boolean
 }
 const getUsersFromDb = async () => {
-  console.log("inside GetusersformDb");
 try {
   
     const users = await user.find({
@@ -37,7 +35,12 @@ const deleteUser = async(_id:any)=>{
 
  
 
-  let update = await user.findByIdAndUpdate(_id,{$set:{isDeleted:true}},{new:true})
+ let update = await user.findByIdAndUpdate(
+  _id,
+  { $set: { isDeleted: true } },
+  { returnDocument: "after" }
+)
+
 
  
   if(!update){
@@ -48,7 +51,6 @@ const deleteUser = async(_id:any)=>{
  
 
 const updateFieldsService = async(id:string,obj:updateType)=>{
-  console.log('updateFieldsServic',obj)
 
   const res = await user.findByIdAndUpdate({_id:id},
     {
@@ -58,7 +60,6 @@ const updateFieldsService = async(id:string,obj:updateType)=>{
 }
 ,{returnDocument:"after"})
 
-console.log('res',res)
 
 if(!res){
   throw new AppError('res is missign',401)

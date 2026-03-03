@@ -7,7 +7,6 @@ import redis from "../config/radis.config";
 
     const token = await c.get('user');
 
-    console.log(`logout user object is : ${token}`)
 
 
      const storeToken  = await redis.get(`refresh:${token.id}`);

@@ -2,7 +2,6 @@
  import {z} from 'zod'
 
 config();
- console.log('inside evn.ts  ', process.env.MONGO_URI)
 
 const envSchema = z.object({
 PORT: z.coerce.number().default(3000),

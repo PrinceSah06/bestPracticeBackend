@@ -4,7 +4,6 @@ import { env } from "../config/env";
 import { AppError } from "../utils/AppError";
 
 export const authMiddleware = async (c: Context, next: Next) => {
-  console.log('==========authmidlware clicked=========')
   const authHeader = c.req.header("Authorization");
 
 
@@ -33,7 +32,6 @@ export const authMiddleware = async (c: Context, next: Next) => {
     const decoded = verify(token, env.JWT_ACCESS_SECRET);
 
     c.set("user", decoded);
-    console.log(`<=====user object ====>  `,decoded)
      await next()
   } catch (error) {
     console.log(error);
@@ -42,11 +40,9 @@ export const authMiddleware = async (c: Context, next: Next) => {
 };
 
 export const authorize = (role: "admin" | "user") => {
-  // console.log(`role comming from authmiddlware is =============${role}`)
   return async (c: Context, next: Next) => {
     const user = c.get("user");
 
-    console.log(`user is ===> `,user)
 
     if (user.role.toLowerCase() !== role.toLowerCase()) {
       throw new AppError("Forbidden", 403);

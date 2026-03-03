@@ -38,7 +38,6 @@ import { authMiddleware } from "../middleware/auth.middleware";
   if (!parsed.success) {
     throw new AppError("Invalid input", 400);
   }
- console.log(`login body ===> : ${parsed.data}`)
  
   const user = await registerUser(parsed.data);
 
@@ -51,7 +50,6 @@ import { authMiddleware } from "../middleware/auth.middleware";
 
 authRoute.post("/login", async (c) => {
   const body = await c.req.json();
-  console.log('body ==========>',body)
 
   const parsed = loginValidator.safeParse(body);
 
@@ -62,12 +60,9 @@ authRoute.post("/login", async (c) => {
   const result = await loginUser(parsed.data);
 
   const { accessToken,refreshToken,user} = result
-console.log("Before redis.set");
 
 
-  //  await redis.set(`refresh:${user.id.toString()}`,refreshToken,"EX",7*24*60*60)
 
-console.log("After redis.set");
 
   setCookie(c, "refreshToken", refreshToken, {
     httpOnly: true,

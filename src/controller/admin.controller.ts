@@ -5,7 +5,6 @@ import { AppError } from "../utils/AppError";
 
 
  const getAlluser = async (c:Context)=>{
-    console.log('inside getallUser Controller ')
 
 
 
@@ -30,7 +29,6 @@ const deleteController = async (c: Context) => {
 
   const id = c.req.param("id")
 
-  console.log("user id is =>>", id)
 
   if (!id) {
     throw new AppError("id is missing", 400)
@@ -47,11 +45,9 @@ const deleteController = async (c: Context) => {
 }
 
 const updateControler = async(c:Context)=>{
-    console.log('here update fields')
     const fields = await c.req.json()
     const id = c.req.param("id")
 
-    // console.log(fields)
 
 const allwoedFields = ["name","isActive","isDelete","isVerified"]
 
@@ -62,7 +58,6 @@ Object.keys(fields).forEach(e=>{
     }
 })
 
-console.log("here is updating fields :",update)
 
 const res = await updateFieldsService(id,update)
 
@@ -74,7 +69,6 @@ const res = await updateFieldsService(id,update)
 const changeRoleController =async(c:Context)=>{
     const {id} = c.req.param();
     const {role} = await c.req.json()
-    console.log(id,role)
 
     if(!role || !id){
         throw new AppError('User role or id is missing',400)
