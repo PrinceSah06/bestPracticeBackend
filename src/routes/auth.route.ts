@@ -24,8 +24,7 @@ authRoute.post(
 authRoute.post(
   "/refresh",
   rateLmiterMiddleware,
-
-  
+  refreshController
 );
 
 export default authRoute;

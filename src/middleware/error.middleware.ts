@@ -7,12 +7,6 @@ export async function errorMiddleware(c: Context, next: Next) {
     try {
         await next()
     } catch (error : any) {
-        console.log(`=============testing error obj ================
-            ${error}`)
-            // error.middleware.ts
-
-
-
         if (error instanceof AppError) {
             return c.json({
                 message: error.message,

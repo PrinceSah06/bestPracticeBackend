@@ -5,9 +5,9 @@ services:
       - "3000:3000"
     environment:
       - MONGO_URI=mongodb://mongo:27017/myDB
-      - VALKEY_HOST=valkey 
-      - VALKEY_PORT=6379
-
+      - REDIS_URL=redis://valkey:6379
+      - JWT_ACCESS_SECRET=docker_compose_jwt_access_secret_key
+      - JWT_REFRESH_SECRET=docker_compose_jwt_refresh_secret_key
     depends_on:
       - mongo
       - valkey

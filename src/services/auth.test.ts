@@ -111,7 +111,7 @@ describe("Auth API Testing", () => {
 
     expect(refreshRes.status).toBe(200);
 
-    const body = await refreshRes.json();
+    const body = (await refreshRes.json()) as any;
     expect(typeof body.accessToken).toBe("string");
   });
 

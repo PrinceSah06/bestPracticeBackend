@@ -7,7 +7,6 @@ import {env} from "../config/env"
 export default async  function connectDB(){
 if(!env){ return 'env misisng'}
     try {
-    console.log(env.MONGO_URI)
          const check =   await mongooss.connect(env.MONGO_URI)
  if (check){
   console.log("✅ MongoDB connected successfully");
